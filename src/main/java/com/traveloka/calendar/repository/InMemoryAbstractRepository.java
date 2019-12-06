@@ -48,16 +48,16 @@ public class InMemoryAbstractRepository extends AbstractRepository {
     }
 
     protected boolean checkValidMeetingRoom(MeetingRoom room){
-        if(users.containsKey(room.getAdmin()))
+        if(!users.containsKey(room.getAdmin()))
             return false;
-        if(!users.containsKey(room.getAdmin()) || !users.get(room.getAdmin()).hasPermissionTocreateMeetingRoom() )
+        if(!users.get(room.getAdmin()).hasPermissionTocreateMeetingRoom() )
         return false ;
         //need to add  other checks
         return true;
     }
 
     protected boolean checkValidUser(User user){
-        if(user.getId()>0)
+        if(user.getId()<=0)
             return false;
         users.put(user.getId() , user);
         //need to add  other checks
@@ -70,21 +70,27 @@ public class InMemoryAbstractRepository extends AbstractRepository {
             return 0;
         List<MeetingRoom> roomList = rooms.values().stream().collect(toCollection(ArrayList::new));
         Collections.sort(roomList ,  new MeetingRoomCompare());
+        int max  =  1 ;
 
-        int count = 1 ;
-        Date end = roomList.get(0).getStart();
-        for(int i=1 ; i< roomList.size() ; i++)
-        {
-            if(roomList.get(i).getStart().compareTo(end)<=0){
-                if(roomList.get(i).getEnd().compareTo(end)>0)
-                    end = roomList.get(i).getEnd();
+        PriorityQueue<MeetingRoom> queues = new PriorityQueue<>(new MeetingRoomCompare());
+        for(int i = 0 ; i < roomList.size() ; i++){
+            MeetingRoom curr = roomList.get(i);
+            if(queues.size()==0){
+                queues.add(curr);
             }
             else{
-                count++;
-                end = roomList.get(i).getEnd();
+                MeetingRoom top = queues.peek();
+                while(top.getEnd().compareTo(curr.getStart())<=0){
+                    queues.poll();
+                    if(queues.size()==0)
+                        break;
+                }
+                queues.add(curr);
             }
+            if(queues.size()> max)
+                max = queues.size();
         }
-        return count;
+        return max;
     }
 
 }

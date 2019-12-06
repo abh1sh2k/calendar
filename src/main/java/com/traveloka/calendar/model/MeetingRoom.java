@@ -17,6 +17,7 @@ public class MeetingRoom {
 //        users.add(admin);
 //    }
     public MeetingRoom(int id , int admin , Date start , Date end , Set<Integer> users){
+        this.id = id;
         this.admin = admin;
         this.start = start ;
         this.end = end ;
