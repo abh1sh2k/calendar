@@ -4,11 +4,24 @@ import com.traveloka.calendar.model.MeetingRoom;
 import com.traveloka.calendar.model.User;
 import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import static java.util.stream.Collectors.toCollection;
+
+@Component
+class MeetingRoomCompare implements Comparator<MeetingRoom> {
+    @Override
+    public int compare(MeetingRoom o1, MeetingRoom o2) {
+        if(o1.getStart().compareTo(o2.getStart()) != 0){
+            return o1.getStart().compareTo(o2.getStart());
+        }
+        else{
+            return o1.getEnd().compareTo(o2.getEnd());
+        }
+    }
+}
 @Component
 public class InMemoryAbstractRepository extends AbstractRepository {
     @Override
@@ -52,6 +65,25 @@ public class InMemoryAbstractRepository extends AbstractRepository {
 
     @Override
     public int intMinimumRoomRequired() {
-        return 0;
+        List<MeetingRoom> roomList = rooms.values().stream().collect(toCollection(ArrayList::new));
+        if(roomList.size()==0)
+            return 0;
+        Collections.sort(roomList ,  new MeetingRoomCompare());
+
+        int count = 1 ;
+        Date end = roomList.get(0).getStart();
+        for(int i=1 ; i< roomList.size() ; i++)
+        {
+            if(roomList.get(i).getStart().compareTo(end)<=0){
+                if(roomList.get(i).getEnd().compareTo(end)>0)
+                    end = roomList.get(i).getEnd();
+            }
+            else{
+                count++;
+                end = roomList.get(i).getEnd();
+            }
+        }
+        return count;
     }
+
 }
