@@ -36,6 +36,7 @@ public class InMemoryAbstractRepository extends AbstractRepository {
     public boolean addUsers(User user) {
        if(!checkValidUser(user))
            return false;
+       users.put(user.getId() , user);
        return true;
     }
 
