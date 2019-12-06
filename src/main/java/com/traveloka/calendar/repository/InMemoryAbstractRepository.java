@@ -65,9 +65,9 @@ public class InMemoryAbstractRepository extends AbstractRepository {
 
     @Override
     public int intMinimumRoomRequired() {
-        List<MeetingRoom> roomList = rooms.values().stream().collect(toCollection(ArrayList::new));
-        if(roomList.size()==0)
+        if(rooms.values().size()==0)
             return 0;
+        List<MeetingRoom> roomList = rooms.values().stream().collect(toCollection(ArrayList::new));
         Collections.sort(roomList ,  new MeetingRoomCompare());
 
         int count = 1 ;

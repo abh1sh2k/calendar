@@ -32,8 +32,8 @@ public class Main {
     }
     void process(String [] inputs) throws Exception{
         try {
-            if (inputs.length<2)
-                throw new Exception("input size less than 2");
+            if (inputs.length<1)
+                throw new Exception("input size less than 1");
             int command = Integer.parseInt(inputs[0]);
             Command co = Command.getCommand(command);
             if(co == Command.NotValid)
